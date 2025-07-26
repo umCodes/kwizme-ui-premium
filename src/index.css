@@ -1,0 +1,36 @@
+@import 'tailwindcss';
+
+
+html{
+  @apply bg-zinc-50
+}
+
+
+html, body, #root{
+  height: 100vh;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+button{
+  cursor: pointer;
+}
+
+
+.no-scroll::-webkit-scrollbar,
+.no-scroll::-webkit-scrollbar-thumb{
+  display: none;
+}
+
+*::-webkit-scrollbar,
+*::-webkit-scrollbar-thumb{
+  display: none;
+}
+
+
+.word-spacing{
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
