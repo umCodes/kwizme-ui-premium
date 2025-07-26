@@ -1,6 +1,7 @@
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 type DropDownProp<T> = {
     options: T[] | null;
@@ -18,53 +19,77 @@ const DropDown = <T,>({label, options, value, setter}: DropDownProp<T>) => {
     const toggleExpand = () => setExpand(!expand);
     
     return (
-<div className="flex flex-col gap-1 relative z-100 m-2">
+<motion.div 
+  initial={{ opacity: 0, y: 10 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3 }}
+  className="flex flex-col gap-2 relative z-100 m-2"
+>
         
-    {label && <div className="text-sm text-zinc-600 font-semibold">{label}</div>}
+    {label && <div className="text-sm text-slate-700 font-semibold">{label}</div>}
 
-    <div className="min-w-40 relative w-fit text-zinc-950  cursor-pointer z-10">    
+    <div className="min-w-40 relative w-fit text-slate-800 cursor-pointer z-10">    
 
-    <div 
-        className="flex items-center justify-between gap-1 px-3 py-2 border border-gray-300 rounded-lg bg-zinc-50 text-gray-700
-           shadow-[inset_2px_2px_4px_rgba(255,255,255,0.7),inset_-1px_-1px_2px_rgba(0,0,0,0.05)]
-           focus:outline-none hover:shadow-[2px_2px_4px_rgba(255,255,255,0.8),-1px_-1px_2px_rgba(0,0,0,0.05)]"
+    <motion.div 
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className="flex items-center justify-between gap-3 px-4 py-3 border-2 border-slate-200 rounded-xl bg-white text-slate-700
+           shadow-lg hover:border-blue-300 hover:shadow-xl transition-all duration-200"
         onClick={toggleExpand}
     >
         
-        <p className="capitalize max-w-40 outline-0 cursor-pointer">{String(value)}</p>
+        <p className="capitalize max-w-40 outline-0 cursor-pointer font-medium">{String(value)}</p>
 
-        <FontAwesomeIcon className={`text-xs ${expand? 'rotate-180' : ''} transition-all `} icon={faChevronDown}/>
+        <motion.div
+          animate={{ rotate: expand ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <FontAwesomeIcon className="text-sm text-slate-500" icon={faChevronDown}/>
+        </motion.div>
+    </motion.div>
+
+
+
+
+    <AnimatePresence>
+      {expand && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -10, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+          className='absolute mt-2 rounded-xl bg-white shadow-xl border border-slate-200 flex flex-col overflow-hidden w-full z-50'
+          style={{ maxHeight: '280px' }}
+        >
+          <div className="overflow-y-auto">
+            {options && options.map((option, index) => {
+                return (
+                  <motion.button 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className={`capitalize cursor-pointer px-4 py-3 text-left transition-all hover:bg-slate-50 ${
+                      value && (option === value) 
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white' 
+                        : 'text-slate-700'
+                    }`}
+                    key={String(option)}
+                    onClick={(e) => {
+                        e.preventDefault()
+                        setter(option);
+                        toggleExpand();
+                    }}
+                  >
+                    {String(option)}
+                  </motion.button>
+                )
+            })}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
     </div>
-
-
-    <div 
-        className='absolute mt-2 ml-4 rounded-md bg-gray-50 shadow flex flex-col overflow-y-scroll transition-all h-fit w-full'
-        style={{
-            maxHeight: expand ? '280px' : '0',
-        }}
-    >
-        {options && options.map((option) => {
-            return (<button 
-                        style={{
-                            backgroundColor: (value && (option === value)) ? '#030712' : '',
-                            color: (value && (option === value)) ? 'white' : '',
-
-                        }}
-                        className=" hover:bg-gray-300 capitalize  cursor-pointer px-2 py-1.5 text-left"
-                        key={String(option)}
-                        onClick={(e) => {
-                            e.preventDefault()
-                            setter(option);
-                            toggleExpand();
-                        }}
-                    >
-                        {String(option)}
-                    </button>)
-        })}
-
-    </div>
-    </div>
-</div>
+</motion.div>
   )
 }
 

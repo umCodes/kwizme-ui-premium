@@ -1,4 +1,5 @@
 import type { JSX} from "react";
+import { motion } from "framer-motion";
 
 type Props = {
     label: string;
@@ -6,15 +7,21 @@ type Props = {
 
 const Input = ({label, ...rest}: Props) => {
   return (
-    <div className="w-80 m-2 flex flex-col gap-1">
-    <label className="text-sm text-zinc-600 font-semibold">{label}</label>
-        <input 
-            className="border border-gray-300 px-4 py-2 rounded-xl bg-zinc-50 text-gray-700
-           shadow-[inset_2px_2px_4px_rgba(255,255,255,0.7),inset_-1px_-1px_2px_rgba(0,0,0,0.05)]
-           focus:outline-none focus:shadow-[2px_2px_4px_rgba(255,255,255,0.8),-1px_-1px_2px_rgba(0,0,0,0.05)]"
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="w-80 m-2 flex flex-col gap-2"
+    >
+      <label className="text-sm text-slate-700 font-semibold">{label}</label>
+      <motion.input 
+        whileFocus={{ scale: 1.02 }}
+        className="border-2 border-slate-200 px-4 py-3 rounded-xl bg-white text-slate-700
+           shadow-lg focus:outline-none focus:border-blue-400 focus:shadow-xl
+           transition-all duration-200 placeholder-slate-400"
             {...rest}
         />
-    </div>
+    </motion.div>
   )
 }
 

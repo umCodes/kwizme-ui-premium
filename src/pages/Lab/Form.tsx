@@ -9,6 +9,8 @@ import RadioBtn from "../../ui/RadioBtn"
 import { creditsPerPage, creditsPerQuestion } from "../../credits/credits"
 import { useEffect, useState } from "react"
 import { getPages } from "../../services/file"
+import { motion } from "framer-motion"
+import { Upload, FileText, Send, Loader2 } from "lucide-react"
 
 const Form = () => {
     const {
@@ -59,15 +61,22 @@ const Form = () => {
     }, [form.file])
     
   return (
-    <form 
+    <motion.form 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
         className="w-100 my-4"
         onSubmit={handleSubmit}
     >
-        <div>        
+        <div className="space-y-6">        
             {
                 !form.file
                 && 
-                <>                
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                >                
                     <Input 
                         label="Topic"
                         type="text"
@@ -77,18 +86,26 @@ const Form = () => {
                         onChange={handleSubjectChange}
                     />
 
-                    <button 
-                        className={`text-zinc-600 mx-6 ${form.file && 'hidden'}`}
+                    <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`flex items-center gap-2 text-blue-600 mx-6 px-4 py-2 rounded-lg border-2 border-dashed border-blue-300 hover:border-blue-400 hover:bg-blue-50 transition-all ${form.file && 'hidden'}`}
                         onClick={handleFileUploadBtn}
                     >
-                        <FontAwesomeIcon icon={faPaperclip}/> Upload PDF
-                    </button> 
-                </>
+                        <Upload className="w-4 h-4" />
+                        Upload PDF
+                    </motion.button> 
+                </motion.div>
 
             }
                 
-            <div className={`${!form.file && 'hidden'}`}>            
-            <div className="flex items-baseline-last">
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: form.file ? 1 : 0, height: form.file ? 'auto' : 0 }}
+              transition={{ duration: 0.4 }}
+              className={`overflow-hidden ${!form.file && 'hidden'}`}
+            >            
+            <div className="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <div>                    
                     <Input 
                         className="hidden"
@@ -100,26 +117,30 @@ const Form = () => {
                         accept='.pdf'
                         onChange={handleFileUpload}
                     />
-                    <div className="text-gray-600 p-2 mx-4 flex items-center gap-3">
-                        <FontAwesomeIcon size="xl" icon={faFilePdf}/>{form.file?.name}
+                    <div className="text-slate-700 flex items-center gap-3">
+                        <FileText className="w-6 h-6 text-red-500" />
+                        <span className="font-medium">{form.file?.name}</span>
                     </div>
                 </div>
-                <button
-                    className="flex items-center gap-1 text-red-600 px-2 py-1 rounded-lg"
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center gap-2 text-red-600 px-3 py-2 rounded-lg bg-red-50 hover:bg-red-100 transition-colors"
                     onClick={handleFileRemoval}
                 >
                     <FontAwesomeIcon icon={faClose}/>
                     Remove
-                </button>
+                </motion.button>
 
             </div>
-            <p className="text-sm text-gray-600 pb-4 pl-4">
-                pages: {loadingPages ? <FontAwesomeIcon spin icon={faSpinner}/>: pages }
+            <p className="text-sm text-slate-600 pb-4 pl-4 flex items-center gap-2">
+                <span>Pages:</span> 
+                {loadingPages ? <Loader2 className="w-4 h-4 animate-spin"/>: <span className="font-semibold">{pages}</span> }
             </p>
 
-            <div className="mx-2">
-                <h3 className="text-zinc-700 text-sm">PDF Type: </h3>
-                <div className="flex items-center">
+            <div className="mx-2 bg-white p-4 rounded-xl border border-slate-200">
+                <h3 className="text-slate-700 font-semibold mb-3">PDF Type:</h3>
+                <div className="flex items-center gap-4">
                     <div className="flex items-baseline-last">
                         <RadioBtn 
                             id={"text"} 
@@ -129,7 +150,7 @@ const Form = () => {
                             onClick={handleFileType}        
                         />
 
-                        <span className="text-sm word-spacing text-zinc-700">
+                        <span className="text-sm word-spacing text-slate-600 bg-amber-50 px-2 py-1 rounded-lg">
                             <FontAwesomeIcon className="text-amber-400" icon={faCoins}/> 
                             <p>{creditsPerPage.textPDF.toFixed(2) }/page</p>
                         </span>
@@ -143,14 +164,14 @@ const Form = () => {
                             onClick={handleFileType}        
                         />
 
-                        <span className="text-sm word-spacing text-zinc-700">
+                        <span className="text-sm word-spacing text-slate-600 bg-amber-50 px-2 py-1 rounded-lg">
                             <FontAwesomeIcon className="text-amber-400" icon={faCoins}/> 
                             <p>{creditsPerPage.imagePDF.toFixed(2)}/page</p>
                         </span>
                     </div>
                 </div>
             </div>
-            </div>
+            </motion.div>
 
 
                 
@@ -158,7 +179,7 @@ const Form = () => {
 
         </div>
 
-        <div className="flex flex-wrap items-baseline-last">
+        <div className="flex flex-wrap items-baseline-last bg-white p-4 rounded-xl border border-slate-200">
             <Input 
                 label="Questions"
                 type="number"
@@ -168,11 +189,12 @@ const Form = () => {
                 value={form.number}
                 onChange={handleNumberChange}
             />
-            <span className="word-spacing text-zinc-700">
+            <span className="word-spacing text-slate-600 bg-amber-50 px-3 py-2 rounded-lg">
                 <FontAwesomeIcon className="text-amber-400" icon={faCoins}/> 
                 <p>{(form.number * creditsPerQuestion).toFixed(2)}</p>
             </span>
         </div>
+        
         <DropDown
             label="Difficulty"
             options={difficultyLevels}
@@ -180,8 +202,8 @@ const Form = () => {
             value={form.difficulty}
         />
 
-        <div className="flex flex-col gap-1 m-2">
-            <div className="text-sm text-zinc-600 font-semibold">Question Types</div>
+        <div className="flex flex-col gap-3 m-2 bg-white p-4 rounded-xl border border-slate-200">
+            <div className="text-sm text-slate-700 font-semibold">Question Types</div>
             <CheckBox 
                 text="MCQ"
                 value="MCQ"
@@ -201,22 +223,39 @@ const Form = () => {
         </div>
 
 
-        <div className="flex items-center justify-end">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.4 }}
+          className="flex items-center justify-end bg-gradient-to-r from-slate-50 to-blue-50 p-4 rounded-xl border border-slate-200"
+        >
 
-            <span className="mx-3">
+            <span className="mx-3 flex items-center gap-2 bg-amber-100 px-4 py-2 rounded-lg border border-amber-200">
                 <FontAwesomeIcon className="text-amber-400 mx-1" icon={faCoins}/>
-                {totalCredits}
+                <span className="font-bold text-amber-800">{totalCredits}</span>
             </span>
-            <button 
-            className="p-2 bg-pink-500 text-zinc-50 rounded-lg px-4 m-1 "
-            disabled={isLoading}>
-                {isLoading ? <><FontAwesomeIcon className="animate-spin" icon={faSpinner}/> Generating...</>: <>
-                    <FontAwesomeIcon icon={faPaperPlane}/> Generate
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading}
+            >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" />
+                    Generate
+                  </>
+                )}
                 </> }
                 
-            </button>
-        </div>
-    </form>
+            </motion.button>
+        </motion.div>
+    </motion.form>
   )
 }
 

@@ -1,35 +1,58 @@
 
 import { useContext } from "react"
 import { MessageContext } from "../context/MessageContext"
+import { motion, AnimatePresence } from "framer-motion"
 
 
 
 const Modal = () => {
     const {modal, setModal} = useContext(MessageContext)
 
-    if(!modal)return
 
     return (
-        <div className="absolute top-0 left-0 flex items-center justify-center z-[1000] h-full w-full bg-[rgb(0,0,0,0.09)] ">
-            
-            <div className="border-2 border-gray-300 px-4 py-2 rounded-xl bg-zinc-50 text-gray-700
-           shadow-[inset_2px_2px_4px_rgba(255,255,255,0.9),inset_-1px_-1px_2px_rgba(0,0,0,0.05)] min-w-60 m-auto max-w-50">
+        <AnimatePresence>
+          {modal && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute top-0 left-0 flex items-center justify-center z-[1000] h-full w-full bg-black/20 backdrop-blur-sm"
+            >
+              <motion.div 
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ type: "spring", duration: 0.3 }}
+                className="bg-white rounded-2xl shadow-2xl min-w-80 max-w-md mx-4 overflow-hidden"
+              >
                 
-                <h1 className="px-2 py-1 my-2">{modal?.text}</h1>
-                <div className="border-t-2 border-gray-300 px-2 py-1 text-end">
-                    <button 
-                    className="m-1 bg-gray-400 text-white px-2 py-1 rounded-md"
-                    onClick={() => setModal(null)}>
-                        {modal?.options.cancel}
-                    </button>
-                    <button 
-                    className="m-1 bg-pink-500 text-white px-2 py-1 rounded-md"
-                    onClick={modal?.options.ok.action}>
-                        {modal?.options.ok.text}
-                    </button>
+                <div className="p-6">
+                  <h1 className="text-lg font-semibold text-slate-800 mb-4">{modal?.text}</h1>
                 </div>
-            </div>
-        </div>)
+                
+                <div className="bg-slate-50 px-6 py-4 flex justify-end gap-3">
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-300 transition-colors"
+                      onClick={() => setModal(null)}
+                    >
+                        {modal?.options.cancel}
+                    </motion.button>
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-4 py-2 bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-lg font-medium hover:from-pink-600 hover:to-red-600 transition-all"
+                      onClick={modal?.options.ok.action}
+                    >
+                        {modal?.options.ok.text}
+                    </motion.button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+    )
 }
 
 export default Modal

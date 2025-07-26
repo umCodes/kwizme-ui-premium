@@ -1,21 +1,34 @@
 import { useContext } from "react"
 import { MessageContext } from "../context/MessageContext"
+import { motion, AnimatePresence } from "framer-motion"
+import { CheckCircle, XCircle } from "lucide-react"
 
 const Message = () => {
     const {message} = useContext(MessageContext); 
   return (
-    <div className={`z-1000 flex gap-1 items-center h-10 absolute top-1 right-4`}>
-        <p className={`font-semibold text-end transition-all duration-500 ${message?.text ? 'opacity-100' : 'opacity-0'} `}>
-            <p className="text-start bg-zinc-50 border border-zinc-400 p-1 rounded-lg">
-                {message?.text}
-            </p>
-        </p>
-        <div className={`
-        border p-1 ${message ?? 'bg-none' }
-         ${message?.status === 'success' && 'bg-green-600'}  
-         ${message?.status === 'failure' && 'bg-red-600'}  
-         rounded-2xl`}/>
-
+    <div className="z-[1000] fixed top-4 right-4">
+      <AnimatePresence>
+        {message && (
+          <motion.div
+            initial={{ opacity: 0, x: 100, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 100, scale: 0.8 }}
+            transition={{ type: "spring", duration: 0.4 }}
+            className={`flex items-center gap-3 p-4 rounded-xl shadow-lg backdrop-blur-sm border ${
+              message.status === 'success' 
+                ? 'bg-green-50/90 border-green-200 text-green-800' 
+                : 'bg-red-50/90 border-red-200 text-red-800'
+            }`}
+          >
+            {message.status === 'success' ? (
+              <CheckCircle className="w-5 h-5 text-green-600" />
+            ) : (
+              <XCircle className="w-5 h-5 text-red-600" />
+            )}
+            <p className="font-medium">{message.text}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

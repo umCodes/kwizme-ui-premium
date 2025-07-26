@@ -6,6 +6,7 @@ import Nav from './Nav';
 import { logout } from '../../services/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDoorOpen, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { motion } from 'framer-motion';
 
 /**
  * Header: the uppermost section/componet of the layout topping every other component
@@ -28,29 +29,41 @@ const Header = () => {
     }
 
   return (
-    <header className='h-full grid grid-cols-[1fr_5fr_1fr] justify-center items-center px-2'>
+    <motion.header 
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className='h-full grid grid-cols-[1fr_5fr_1fr] justify-center items-center px-4 text-white'
+    >
       <Logo/>
       <Nav/>
       {
         !user 
         ?
-        <Link
-          className='ml-auto font-semibold text-green-600 py-1 px-4 hover:bg-green-300'
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Link
+          className='ml-auto font-semibold text-white py-2 px-4 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 backdrop-blur-sm'
           to="/signup"
           title='signup'
         >
           <FontAwesomeIcon icon={faDoorOpen}/>
         </Link>
+        </motion.div>
         :
-        <button 
+        <motion.button 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           title='logout'
-          className='ml-auto font-semibold text-red-700 py-1 px-4  hover:bg-red-300'
+          className='ml-auto font-semibold text-white py-2 px-4 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-all duration-200 backdrop-blur-sm'
           onClick={handleLogout}
         >
           <FontAwesomeIcon icon={faRightFromBracket}/> 
-        </button>
+        </motion.button>
       }       
-    </header>
+    </motion.header>
   )
 }
 
